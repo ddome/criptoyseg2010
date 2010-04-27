@@ -1,4 +1,4 @@
-#include "crypt.h"
+#include "../include/crypt.h"
 
 #define CBC 1
 #define ECB 2

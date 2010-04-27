@@ -1,4 +1,4 @@
-#include "imageUtils.h"
+#include "../include/imageUtils.h"
 
 #define byte sizeof(char)
 #define word sizeof(unsigned short int)

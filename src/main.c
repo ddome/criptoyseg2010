@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "crypt.h"
-#include "imageUtils.h"
+#include "../include/crypt.h"
+#include "../include/imageUtils.h"
 
 typedef struct {
     const char *name;
