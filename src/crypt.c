@@ -169,21 +169,24 @@ AES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
 {
     char block[16]={0};
     char src_block[16]={0};
+    char vi_aux[16]={0};
+    char key_aux[16]={0};
     AES_KEY pass;
     int num=15;
     
     CopyHeader(srcFile,dstFile,info);
-    strncpy((char *)block,key,16);
+    memcpy(vi_aux,vi,16);
+    memcpy(key_aux,key,16);
     printf("AES CFB Tipo: %d\n",type);
+    printf("Key: %s",key);
     if( type == AES_ENCRYPT )
-        AES_set_encrypt_key((const unsigned char *)&block,128,&pass);
+        AES_set_encrypt_key((const unsigned char *)&key_aux,128,&pass);
     else
-        AES_set_decrypt_key((const unsigned char *)&block,128,&pass);
+        AES_set_decrypt_key((const unsigned char *)&key_aux,128,&pass);
 
-    
     while((fread(src_block,16*sizeof(char),1,srcFile))==1)
     {
-        AES_cfb128_encrypt(&src_block,&block,num,&pass,vi,&num,type);
+        AES_cfb128_encrypt((const unsigned char *)&src_block,(unsigned char *)&block,16,&pass,(unsigned char *)vi_aux,&num,type);
         fwrite(&block,16*sizeof(char),1,dstFile);
     }
     
@@ -206,13 +209,12 @@ AES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     else
         AES_set_decrypt_key((const unsigned char *)&block,128,&pass);
 
-    
     while((fread(src_block,16*sizeof(char),1,srcFile))==1)
     {
         AES_ofb128_encrypt((const unsigned char *)&src_block,(unsigned char *)&block,16,&pass,(unsigned char * )vi,&num);
         fwrite(&block,16*sizeof(char),1,dstFile);
     }
-    printf("aca\n");
+    
     return 1;
 }
 
@@ -340,6 +342,7 @@ DES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
 /*      Funciones auxiliares      */
 /**********************************/
 
+/*Asocio el string representando el metodo de encriptacion con un entero*/
 int
 GetMethod(char * method)
 {
@@ -368,6 +371,8 @@ GetMethod(char * method)
     return methodRet;
 }
 
+
+/*Copio el header de la imagen sin hacer alteraciones.*/
 void
 CopyHeader(FILE * srcFile,FILE * dstFile,imageInfo info)
 {

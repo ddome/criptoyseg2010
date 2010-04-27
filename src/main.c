@@ -5,6 +5,7 @@
 
 #include "crypt.h"
 #include "imageUtils.h"
+
 typedef struct {
     const char *name;
     int         has_arg;
@@ -15,6 +16,8 @@ typedef struct {
 struct option * InitOptionStruct(void);
 
 int IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * password,char * vi,int inOut,int out);
+
+imageInfo ValidateImageFormat(imageInfo info);
 
 void PrintHelp(void);
 
@@ -58,7 +61,7 @@ main(int argc,char * argv[])
 	    {0,0,0,0}
              };
 
-    
+    /*Uso getopt para parsear los argumentos pasados por lines de comando.*/
     while(!error && !help && (opt = getopt_long_only(argc, argv, "edK:a:m:h",options,&indexptr)) != -1)
     {
         switch(opt)
@@ -95,12 +98,10 @@ main(int argc,char * argv[])
 	case 'h':
 	    help=1;
 	    break;
+	case -1 :
 	case ':':
-	    printf("La opcion %s requiere que ingrese un parametro.\n",options[optind].name);/*TODO Arreglar el caso en que no se ingresa un parametro*/
-	    error=1;
-	    break;
 	case '?':
-	    printf("La opcion %s requiere que ingrese un parametro.\n",options[optind].name);/*TODO Arreglar el caso en que no se ingresa un parametro*/
+	    printf("La opcion %s requiere que ingrese un parametro.\n",options[optind].name);
 	    error=1;
 	    break;
         }
@@ -112,6 +113,9 @@ main(int argc,char * argv[])
     }
     else
     {
+        /*Verifico que si la combinacion de parametros ingrasados es correcta. Si lo es proceso la imagen. En caso contrario
+         *muestro el Help y devuelvo error.
+         */
         if(IsValid(encrypt,decrypt,key,method,alg,password,vi,in,out))
         {
 	srcFile=fopen(srcPath,"rb");
@@ -127,7 +131,8 @@ main(int argc,char * argv[])
 	    fclose(srcFile);
 	    exit(EXIT_FAILURE);
 	}
-	info=GetImageInfo(srcFile);
+	info=GetImageInfo(srcFile); /*Obtengo la informacion del header de la imagen*/
+	info=ValidateImageFormat(info);
 	if(info==NULL)
 	{
 	    printf("ERROR: El formato de la imagen es incorrecto.\n");
@@ -136,15 +141,19 @@ main(int argc,char * argv[])
 	    free(info);
 	    exit(EXIT_FAILURE);
 	}
+	PrintImageInfo(info);
+	printf("Encriptando... ");
+	/*Aca se procesa la imagen en funcion de los parametros pasados.*/
 	if(!Start(encrypt,decrypt,key,method,alg,password,vi,srcFile,dstFile,info))
 	{
+	    printf("Fallo!\n");
 	    printf("ERROR: Se produjo un error inesperado.\n");
 	    fclose(srcFile);
 	    fclose(dstFile);
 	    free(info);
 	    exit(EXIT_FAILURE);
 	}
-
+	printf("Listo!\n");
 	fclose(srcFile);
 	fclose(dstFile);
 	free(info);
@@ -152,6 +161,7 @@ main(int argc,char * argv[])
         else
         {
 	PrintHelp();
+	exit(EXIT_FAILURE);
         }
     }
     exit(EXIT_SUCCESS);
@@ -161,27 +171,26 @@ main(int argc,char * argv[])
 int
 IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * password,char * vi,int in,int out)
 {
-    int error=1;
     /*Valido la utilizacion de in y out*/
     if(!in && !out)
     {
         printf("ERROR: ");
         printf("Debe especificar el parametro -in y -out.\n");
-        error=0;
+        return 0;
     }
     
-    /*Valido la utilizacion de encrypt y decrypt*/
+    /*Valido la utilizacion de encrypt o decrypt*/
     if(encrypt && decrypt)
     {
         printf("ERROR: ");
         printf("No es posible utilizar los parametros -e y -d en simultaneo.\n");
-        error=0;
+        return 0;
     }
     if(!encrypt && !decrypt)
     {
         printf("ERROR: ");
         printf("Debe especificar el parametro -e o -d.\n");
-        error=0;
+        return 0;
     }
     
     /*Valido el algoritmo de encripcion*/
@@ -197,7 +206,7 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
         {
 	printf("\n");
         }
-        error=0;
+        return 0;
     }
     
     /*Valido el metodo de encripcion*/
@@ -213,7 +222,7 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
         {
 	printf("\n");
         }
-        error=0;
+        return 0;
     }
     
     /*Valido la autenticacion*/
@@ -221,21 +230,71 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
     {
         if(password==NULL && key==NULL && vi==NULL)
         {
-	printf("Debe ingresar los datos de autenticacion. Ya sea usando -password o -K en conjunto con -vi.\n");
+	printf("ERROR: Debe ingresar los datos de autenticacion. Ya sea usando -password o -K en conjunto con -vi.\n");
+	return 0;
         }
         else if(password!=NULL && (key!=NULL || vi!=NULL))
         {
 	printf("ERROR: ");
 	printf("No es posible utilizar los parametros -password y -key o -vi en simultaneo\n");
-	error=0;
+	return 0;
         }
         else if(password==NULL && ((key!=NULL || vi==NULL) || (key==NULL || vi!=NULL)))
         {
 	printf("ERROR: Las opciones -K y -vi deben ser utilizadas en conjunto.\n");
-	error=0;
+	return 0;
         }
     }
-    return error;
+    
+    /*valido que para ebc se debe especificar el password*/
+    if( strncmp(method,"ebc",3)==0 && (key!=NULL || vi!=NULL || password==NULL))
+    {
+        printf("ERROR: El metodo de encriptacion ecb solo puede ser utilizado en conjunto con el argumento -pass unicamente\n");
+        return 0;
+    }
+    
+    /*Si uso cfb, ofb o cbc debo especificar el password o el key en conjunto con vi*/
+    if( (strncmp(method,"cfb",3)!=0 || strncmp(method,"ofb",3)!=0 || strncmp(method,"cbc",3)!=0) && (password==NULL && (key==NULL || vi==NULL) ))
+    {
+        printf("ERROR: Los metodos de encriptacion ebc ofb y cbc requieren que utilize el parametro -pass o -K y -vi en conjunto.\n");
+        return 0;
+    }
+    
+    return 1;
+}
+
+/*Valido el formato de la imagen*/
+imageInfo
+ValidateImageFormat(imageInfo info)
+{
+    /*Version 3.0 de BMP*/
+    if(strncmp(info->identifier,"BM",2)!=0)
+    {
+        free(info);
+        return NULL;
+    }
+    
+    /*Bit per pixel menor a 24*/
+    if(info->bpp<=24)
+    {
+        free(info);
+        return NULL;
+    }
+    
+    /*La imagen no esta comprimida*/
+    if(info->compression!=0)
+    {
+        free(info);
+        return NULL;
+    }
+    
+    if(info->dataSize%8!=0 || info->dataSize%16!=0)
+    {
+        free(info);
+        return NULL;
+    }
+    
+    return info;
 }
 
 void

@@ -23,8 +23,17 @@ struct imageInfoT{
 
 typedef struct imageInfoT * imageInfo;
 
+/* Extrae informacion importante del header
+ * imageFile: Puntero al archivo que contiene la imagen
+ *
+ * Devuelve NULL en caso de error. En caso contrario devuelve
+ * imageInfo con la informacion del header de la imagen 
+ */
 imageInfo GetImageInfo(FILE * imageFile);
 
+/* Imprime en la salida estandar la informacion contenida en
+ * imageInfo
+ */
 void PrintImageInfo(imageInfo image);
 
 #endif
