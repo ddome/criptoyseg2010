@@ -1,8 +1,9 @@
-include <stdio.h>
+#include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "crypt.h"
 #include "imageUtils.h"
 typedef struct {
     const char *name;
@@ -40,7 +41,7 @@ main(int argc,char * argv[])
     FILE * srcFile;
     FILE * dstFile;
     
-    imageInfo * info=NULL;
+    imageInfo info=NULL;
     
     static struct option options[11] =
              {
@@ -113,7 +114,7 @@ main(int argc,char * argv[])
     {
         if(IsValid(encrypt,decrypt,key,method,alg,password,vi,in,out))
         {
-	srcFile=fopen(srcPath,"r");
+	srcFile=fopen(srcPath,"rb");
 	if(srcFile==NULL)
 	{
 	    printf("ERROR: No se puedo abrir el archivo de origen. Verifique que exista y tenga los permisos adecuados.\n");
@@ -123,15 +124,30 @@ main(int argc,char * argv[])
 	if(dstFile==NULL)
 	{
 	    printf("ERROR: No se puedo abrir el archivo de destino. Verifique tener los permisos adecuados.\n");
+	    fclose(srcFile);
 	    exit(EXIT_FAILURE);
 	}
 	info=GetImageInfo(srcFile);
 	if(info==NULL)
 	{
-	    printf("El formato de la imagen es incorrecto.\n");
+	    printf("ERROR: El formato de la imagen es incorrecto.\n");
+	    fclose(srcFile);
+	    fclose(dstFile);
+	    free(info);
 	    exit(EXIT_FAILURE);
 	}
-	
+	if(!Start(encrypt,decrypt,key,method,alg,password,vi,srcFile,dstFile,info))
+	{
+	    printf("ERROR: Se produjo un error inesperado.\n");
+	    fclose(srcFile);
+	    fclose(dstFile);
+	    free(info);
+	    exit(EXIT_FAILURE);
+	}
+
+	fclose(srcFile);
+	fclose(dstFile);
+	free(info);
         }
         else
         {
@@ -140,6 +156,7 @@ main(int argc,char * argv[])
     }
     exit(EXIT_SUCCESS);
 }
+
 
 int
 IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * password,char * vi,int in,int out)
@@ -171,7 +188,7 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
     if(alg==NULL || (strncmp(alg,"aes",3)!=0 && strncmp(alg,"des",3)!=0))
     {
         printf("ERROR: ");
-        printf("Debe especificar un algoritmo de incripcion valido -m [aes|des].");
+        printf("Debe especificar un algoritmo de incripcion valido -a [aes|des].");
         if(method!=NULL)
         {
 	printf("Usted ingreso %s.\n",alg);
@@ -187,7 +204,7 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
     if(method==NULL || (strncmp(method,"ecb",3)!=0 && strncmp(method,"cfb",3)!=0 && strncmp(method,"ofb",3)!=0 && strncmp(method,"cbc",3)!=0))
     {
         printf("ERROR: ");
-        printf("Debe especificar un metodo de encripcion valido -a [ecb|cfb|ofb|cbc].");
+        printf("Debe especificar un metodo de encripcion valido -m [ecb|cfb|ofb|cbc].");
         if(method!=NULL)
         {
 	printf("Usted ingreso %s.\n",method);
