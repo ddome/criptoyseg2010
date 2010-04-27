@@ -1,12 +1,30 @@
-#ifndef _IMAGE_UTIL_
-#define _IMAGE_UTIL_
+#ifndef _IMAGE_UTIL_H_
+#define _IMAGE_UTIL_H_
 
-typedef struct {
-    int num;
-} imageInfoT;
+#include <stdio.h>
+#include <stdlib.h>
 
-imageInfoT * GetImageInfo(FILE * imageFile);
+struct imageInfoT{
+    char identifier[3];
+    unsigned int fileSize;
+    unsigned int dataOffset;
+    unsigned int headerSize;
+    unsigned int width;
+    unsigned int height;
+    unsigned short int planes;
+    unsigned short int bpp;
+    unsigned int compression;
+    unsigned int dataSize;
+    unsigned int hResolution;
+    unsigned int vResolution;
+    unsigned int colors;
+    unsigned int importantColors;
+};
 
-void PrintImageInfo(imageInfoT * image);
+typedef struct imageInfoT * imageInfo;
+
+imageInfo GetImageInfo(FILE * imageFile);
+
+void PrintImageInfo(imageInfo image);
 
 #endif
