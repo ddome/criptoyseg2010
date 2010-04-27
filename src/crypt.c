@@ -7,31 +7,31 @@
 
 /*Las siguientes funciones devuelve 0 o NULL en caso de error. Si todo sale como planeado devuelven 1 o un valor distinto de NULL*/
 /*Prototipo de funciones para encriptar y desencriptar con AES*/
-int CryptAES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info,int type);
+static int CryptAES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info,int type);
 
-int AES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
+static int AES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
 
-int AES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int type);
+static int AES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int type);
 
-int AES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
+static int AES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
 
-int AES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
+static int AES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
 
 /*Prototipo de funciones para encriptar y desencriptar con DES*/
-int CryptDES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info,int type);
+static int CryptDES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info,int type);
 
-int DES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int type);
+static int DES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int type);
 
-int DES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
+static int DES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
 
-int DES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
+static int DES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
 
-int DES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
+static int DES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type);
 
 /*Prototipo de funciones auxiliares*/
-int GetMethod(char * method);
+static int GetMethod(char * method);
 
-void CopyHeader(FILE * srcFile,FILE * dstFile,imageInfo info);
+static void CopyHeader(FILE * srcFile,FILE * dstFile,imageInfo info);
 
 int
 Start(int encrypt,int decrypt,char * key,char * method,char * alg,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info)
@@ -81,7 +81,7 @@ Start(int encrypt,int decrypt,char * key,char * method,char * alg,char * passwor
 /*      Funciones para AES        */
 /**********************************/
 
-int
+static int
 CryptAES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info,int type)
 {
     int methodAux=0;
@@ -114,7 +114,7 @@ CryptAES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE 
     return status;
 }
 
-int
+static int
 AES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type)
 {
     char block[16]={0};
@@ -139,7 +139,7 @@ AES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     return 1;
 }
 
-int
+static int
 AES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int type)
 {
     char block[16]={0};
@@ -164,7 +164,7 @@ AES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int t
     return 1;
 }
 
-int
+static int
 AES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type)
 {
     char block[16]={0};
@@ -193,7 +193,7 @@ AES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     return 1;
 }
 
-int
+static int
 AES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type)
 {
     unsigned char block[16]={0};
@@ -222,7 +222,7 @@ AES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
 /*      Funciones para DES        */
 /**********************************/
 
-int
+static int
 CryptDES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE * dstFile,imageInfo info,int type)
 {
     int methodAux=0;
@@ -255,7 +255,7 @@ CryptDES(char * key,char * method,char * password,char * vi,FILE * srcFile,FILE 
     return status;
 }
 
-int
+static int
 DES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int type)
 {
     DES_cblock block;
@@ -274,7 +274,7 @@ DES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int t
     return 1;
 }
 
-int
+static int
 DES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type)
 {
     unsigned char block[8]={0};
@@ -295,7 +295,7 @@ DES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     return 1;
 }
 
-int
+static int
 DES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type)
 {
     unsigned char block[8]={0};
@@ -316,7 +316,7 @@ DES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     return 1;
 }
 
-int
+static int
 DES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,int type)
 {
     unsigned char block[8]={0};
@@ -343,7 +343,7 @@ DES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
 /**********************************/
 
 /*Asocio el string representando el metodo de encriptacion con un entero*/
-int
+static int
 GetMethod(char * method)
 {
     int methodRet;
@@ -373,7 +373,7 @@ GetMethod(char * method)
 
 
 /*Copio el header de la imagen sin hacer alteraciones.*/
-void
+static void
 CopyHeader(FILE * srcFile,FILE * dstFile,imageInfo info)
 {
     char * aux;
