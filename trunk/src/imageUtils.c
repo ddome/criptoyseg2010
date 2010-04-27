@@ -14,48 +14,34 @@ GetImageInfo(FILE * imageFile)
         return NULL;
     }
     fread(info->identifier,2*byte,1,imageFile);
-    printf("%s\n",info->identifier);
     
     fread(&(info->fileSize),dword,1,imageFile);
-    printf("%d\n",info->fileSize);
     
     fseek(imageFile,dword,SEEK_CUR);
     
     fread(&(info->dataOffset),dword,1,imageFile);
-    printf("%d\n",info->dataOffset);
     
     fread(&(info->headerSize),dword,1,imageFile);
-    printf("%d\n",info->headerSize);
     
     fread(&(info->width),dword,1,imageFile);
-    printf("%d\n",info->width);
     
     fread(&(info->height),dword,1,imageFile);
-    printf("%d\n",info->height);
     
     fread(&(info->planes),word,1,imageFile);
-    printf("%d\n",info->planes);
     
     fread(&(info->bpp),word,1,imageFile);
-    printf("%d\n",info->bpp);
     
     fread(&(info->compression),dword,1,imageFile);
-    printf("%d\n",info->compression);
     
     fread(&(info->dataSize),dword,1,imageFile);
-    printf("%d\n",info->dataSize);
     
     fread(&(info->hResolution),dword,1,imageFile);
-    printf("%d\n",info->hResolution);
     
     fread(&(info->vResolution),dword,1,imageFile);
-    printf("%d\n",info->vResolution);
     
     fread(&(info->colors),dword,1,imageFile);
-    printf("%d\n",info->colors);
     
     fread(&(info->importantColors),dword,1,imageFile);
-    printf("%d\n",info->importantColors);
     
     return info;
 }
@@ -63,31 +49,34 @@ GetImageInfo(FILE * imageFile)
 void
 PrintImageInfo(imageInfo info)
 {
-    printf("Identificador: %s.\n",info->identifier);
+    printf("\n\nInformacion de la imagen.\n");
+    printf("=========================\n");
     
-    printf("Tamano del archivo: %d bytes.\n",info->fileSize);
+    printf("\tIdentificador: %s.\n",info->identifier);
     
-    printf("Bitmap Data Offset: %d bytes.\n",info->dataOffset);
+    printf("\tTamano del archivo: %d bytes.\n",info->fileSize);
     
-    printf("Bitmap Header Size %d bytes.\n",info->headerSize);
+    printf("\tBitmap Data Offset: %d bytes.\n",info->dataOffset);
     
-    printf("Width: %d pixels.\n",info->width);
+    printf("\tBitmap Header Size %d bytes.\n",info->headerSize);
     
-    printf("Height: %d pixels\n",info->height);
+    printf("\tWidth: %d pixels.\n",info->width);
     
-    printf("Planes: %d.\n",info->planes);
+    printf("\tHeight: %d pixels\n",info->height);
     
-    printf("Bits Per Pixel: %d.\n",info->bpp);
+    printf("\tPlanes: %d.\n",info->planes);
     
-    printf("Compression: %d.\n",info->compression);
+    printf("\tBits Per Pixel: %d.\n",info->bpp);
     
-    printf("Bitmap Data Size: %d.\n",info->dataSize);
+    printf("\tCompression: %d.\n",info->compression);
     
-    printf("HResolution: %d.\n",info->hResolution);
+    printf("\tBitmap Data Size: %d.\n",info->dataSize);
     
-    printf("VResolution: %d.\n",info->vResolution);
+    printf("\tHResolution: %d.\n",info->hResolution);
     
-    printf("Colors: %d.\n",info->colors);
+    printf("\tVResolution: %d.\n",info->vResolution);
     
-    printf("Important Color: %d.\n",info->importantColors);    
+    printf("\tColors: %d.\n",info->colors);
+    
+    printf("\tImportant Color: %d.\n",info->importantColors);    
 }
