@@ -49,12 +49,10 @@ Start(int encrypt,int decrypt,char * key,char * method,char * alg,char * passwor
 {
     int status=1;
 
-    /*if(!Generate_Key_VI(password,&key,&vi,GetMethod(method)))
+    if(!Generate_Key_VI(password,&key,&vi,GetMethod(method)))
     {
         return 0;
-    }*/
-    key = password;
-    vi=password;
+    }
     
     if(encrypt)
     {

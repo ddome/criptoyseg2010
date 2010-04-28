@@ -62,11 +62,19 @@ Aquí se exponen algunos resultados obtenidos.\\
 
 Supongamos la siguiente imagen:\\
 
-/**********PEGAR IMAGEN DE PINGUINO **********/
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=.5]{tux.png}
+\caption{Tux}
+\end{figure}
 
 Al encriptarla con DES, se obtiene el siguiente resultado:\\
 
-/**********PEGAR IAGEN DE PINGUINO ENCRIPTADO CON DES + ECB
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=.5]{desecb.png}
+\caption{Tux con DES en modo ECB}
+\end{figure}
 
 Como se puede ver, en la imagen encriptada se observan claramente los contornos de la figura presente en la imagen sin encriptar.\\ 
 Luego de hacer pruebas con varias imágenes, se dedujo que en las zonas que tienen cambios bruscos de colores, al encriptarse, dichos cambios siguen viéndose, pudiendo inferir la imagen sin encriptar.\\
@@ -82,7 +90,11 @@ Al encriptar con los métodos CBC y CFB, ya sea con AES o DES, en todos los casos
 
 Vemos ahora encripción de la imagen anterior, utilizando AES y CBC:\\
 
-/**************IMAGEN DEL PINGUINO ENCRIPTADA CON AES Y CBC*********/
+\begin{figure}[htp]
+\centering
+\includegraphics[scale=.5]{aescbc.png}
+\caption{Tux con AES en modo CBC}
+\end{figure}
 
 y, para comparar, la misma imagen encriptada utilizando DES y CFB:\\
 
