@@ -49,10 +49,12 @@ Start(int encrypt,int decrypt,char * key,char * method,char * alg,char * passwor
 {
     int status=1;
 
-    if(!Generate_Key_VI(password,&key,&vi,GetMethod(method)))
+    /*if(!Generate_Key_VI(password,&key,&vi,GetMethod(method)))
     {
         return 0;
-    }
+    }*/
+    key = password;
+    vi=password;
     
     if(encrypt)
     {
@@ -273,6 +275,7 @@ DES_ECB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * password,int t
         DES_ecb_encrypt(&src_block,&block,&pass,type);
         fwrite(&block,8*sizeof(char),1,dstFile);
     }
+
     return 1;
 }
 
@@ -416,12 +419,13 @@ SafePassword(char * password,int len)
 {
     int lenAux;
     char * resp;
+
     lenAux=(strlen(password)>len)?len:strlen(password);
     if((resp=calloc(1,len))==NULL)
     {
         return NULL;
     }
-    
+
     memcpy(resp,password,lenAux);
     return resp;
 }

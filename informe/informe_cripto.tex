@@ -50,7 +50,8 @@ Aquí se presentan las consideraciones generales respectivas a la implementación:
 	\item El resultado de la encriptación es también una imagen bmp que conserva las dimensiones de la imagen original, y la misma paleta de colores
 	\item El algoritmo AES se considera sólo con claves de 128 bits
 	\item Si la cantidad de bytes de la imagen no es múltiplo del tamaño del bloque, se descartará la imagen
-	\item ACA AGREGAR, DEL DOCUMENTO DE ACLARACIONES DEL TP, LAS OPCIONES QUE ELEGIMOS
+	\item Para el cifrado con feedback, se fijo la cantidad de bits de feedback
+	\item Se fijó la longitud del password, del key y del vector de inicialización. La longitud debe ser igual al tamaño del bloque del algoritmo a utilizar (8 para DES, 16 para AES)
 \end{itemize}
 
 \section{Análisis de los resultados}
@@ -87,7 +88,7 @@ y, para comparar, la misma imagen encriptada utilizando DES y CFB:\\
 
 \subsection{Desencripción con Clave Incorrecta}
 
-/**************ACA EXPLICAR QUE PASA CUANDO METES UNA CLAVE INCORRECTA-************/
+Supongamos que encriptamos una imagen con cualquier algoritmo (AES o DES) y con cualquier método (ECB, CBC, CFB o OFB). Si el password para encriptar fuese \emph{hola} pero a la hora de desencriptar usamos \emph{chau}, la imagen no puede ser recuperada.
 
 \subsection{Análisis ECB}
 
