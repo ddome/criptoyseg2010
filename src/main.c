@@ -46,6 +46,8 @@ main(int argc,char * argv[])
     
     imageInfo info=NULL;
     
+    
+    
     static struct option options[11] =
              {
 	    {"m",required_argument,0,'m'},
@@ -64,6 +66,7 @@ main(int argc,char * argv[])
     /*Uso getopt para parsear los argumentos pasados por lines de comando.*/
     while(!error && !help && (opt = getopt_long_only(argc, argv, "edK:a:m:h",options,&indexptr)) != -1)
     {
+        printf("opy: %d\n",opt);
         switch(opt)
         {
 	case 'e':
@@ -106,7 +109,7 @@ main(int argc,char * argv[])
 	    break;
         }
     }
-    
+
     if(error || help)
     {
         PrintHelp();
@@ -132,7 +135,7 @@ main(int argc,char * argv[])
 	    exit(EXIT_FAILURE);
 	}
 	info=GetImageInfo(srcFile); /*Obtengo la informacion del header de la imagen*/
-	info=ValidateImageFormat(info);
+	//info=ValidateImageFormat(info);
 	if(info==NULL)
 	{
 	    printf("ERROR: El formato de la imagen es incorrecto.\n");
@@ -141,7 +144,7 @@ main(int argc,char * argv[])
 	    free(info);
 	    exit(EXIT_FAILURE);
 	}
-	PrintImageInfo(info);
+	//PrintImageInfo(info);
 	printf("Encriptando... ");
 	/*Aca se procesa la imagen en funcion de los parametros pasados.*/
 	if(!Start(encrypt,decrypt,key,method,alg,password,vi,srcFile,dstFile,info))
@@ -247,18 +250,18 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
     }
     
     /*valido que para ebc se debe especificar el password*/
-    if( strncmp(method,"ebc",3)==0 && (key!=NULL || vi!=NULL || password==NULL))
+    /*if( strncmp(method,"ebc",3)==0 && (key!=NULL || vi!=NULL || password==NULL))
     {
         printf("ERROR: El metodo de encriptacion ecb solo puede ser utilizado en conjunto con el argumento -pass unicamente\n");
         return 0;
-    }
+    }*/
     
     /*Si uso cfb, ofb o cbc debo especificar el password o el key en conjunto con vi*/
-    if( (strncmp(method,"cfb",3)!=0 || strncmp(method,"ofb",3)!=0 || strncmp(method,"cbc",3)!=0) && (password==NULL && (key==NULL || vi==NULL) ))
+    /*if( (strncmp(method,"cfb",3)!=0 || strncmp(method,"ofb",3)!=0 || strncmp(method,"cbc",3)!=0) && (password==NULL && (key==NULL || vi==NULL) ))
     {
         printf("ERROR: Los metodos de encriptacion ebc ofb y cbc requieren que utilize el parametro -pass o -K y -vi en conjunto.\n");
         return 0;
-    }
+    }*/
     
     return 1;
 }
