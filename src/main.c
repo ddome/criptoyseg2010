@@ -249,20 +249,6 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
         }
     }
     
-    /*valido que para ebc se debe especificar el password*/
-    /*if( strncmp(method,"ebc",3)==0 && (key!=NULL || vi!=NULL || password==NULL))
-    {
-        printf("ERROR: El metodo de encriptacion ecb solo puede ser utilizado en conjunto con el argumento -pass unicamente\n");
-        return 0;
-    }*/
-    
-    /*Si uso cfb, ofb o cbc debo especificar el password o el key en conjunto con vi*/
-    /*if( (strncmp(method,"cfb",3)!=0 || strncmp(method,"ofb",3)!=0 || strncmp(method,"cbc",3)!=0) && (password==NULL && (key==NULL || vi==NULL) ))
-    {
-        printf("ERROR: Los metodos de encriptacion ebc ofb y cbc requieren que utilize el parametro -pass o -K y -vi en conjunto.\n");
-        return 0;
-    }*/
-    
     return 1;
 }
 
