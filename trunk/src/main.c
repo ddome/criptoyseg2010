@@ -306,5 +306,15 @@ ValidateImageFormat(imageInfo info)
 void
 PrintHelp(void)
 {
-    printf("TODO completar help\n");
+    printf("crypt -in filein -out fileout [-e|-d] -a [aes|des] -m ecb -password password\n");
+	printf("crypt -in filein -out fileout [-e|-d] -a [aes|des] -m [cbc|cfb|ofb] -K key -vi vectorinit\n");
+	printf("Arguments:\n");
+	printf("in: input file (.bmp format)\n");
+	printf("e: encript\n");
+	printf("d: decript\n");
+	printf("a: aes or des algorithm\n");
+	printf("m: block cipher operation mode  \n");
+	printf("password: if ecb is choosen, choose a password for encription\n");
+	printf("K: if cbc,cfb or ofb is choosen, choose a key for encription\n");
+	printf("vi: if cbc,cfb or ofb is chosen, choose a initialization vector\n");
 }
