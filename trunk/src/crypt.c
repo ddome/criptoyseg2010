@@ -463,7 +463,7 @@ SafeVI(char * vi,int len)
 static int
 Generate_Key_VI(char * password,char ** key,char ** vi,int method)
 {
-    if(password!=NULL && *key==NULL && *vi==NULL && mode!=ECB)
+    if(password!=NULL && *key==NULL && *vi==NULL && method!=ECB)
     {
         const EVP_CIPHER *cipher;
         const EVP_MD *dgst = EVP_md5();
