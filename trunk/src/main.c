@@ -145,6 +145,7 @@ main(int argc,char * argv[])
 	}
 	PrintImageInfo(info);
 	printf("Procesando... ");
+	fflush(stdout);
 	/*Aca se procesa la imagen en funcion de los parametros pasados.*/
 	if(!Start(encrypt,decrypt,key,method,alg,password,vi,srcFile,dstFile,info))
 	{
@@ -263,6 +264,12 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
     if(vi!=NULL && ( (strlen(vi)!=8 && strncmp(alg,"des",3)==0) || (strlen(vi)!=16 && strncmp(alg,"aes",3)==0) ))
     {
         printf("ERROR: La longitud del vector de inicializacion debe ser 8 para DES o 16 para AES\n");
+        return 0;
+    }
+
+    if(strncmp(method,"ecb",3)==0 && (password==NULL || vi!=NULL || key!=NULL))
+    {
+        printf("ERROR: Debe especificar un password con -password para el metodo ECB. No se debe utilizar -K o -vi para este metodo\n");
         return 0;
     }
     
