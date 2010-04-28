@@ -66,7 +66,6 @@ main(int argc,char * argv[])
     /*Uso getopt para parsear los argumentos pasados por lines de comando.*/
     while(!error && !help && (opt = getopt_long_only(argc, argv, "edK:a:m:h",options,&indexptr)) != -1)
     {
-        printf("opy: %d\n",opt);
         switch(opt)
         {
 	case 'e':
@@ -135,7 +134,7 @@ main(int argc,char * argv[])
 	    exit(EXIT_FAILURE);
 	}
 	info=GetImageInfo(srcFile); /*Obtengo la informacion del header de la imagen*/
-	//info=ValidateImageFormat(info);
+	info=ValidateImageFormat(info);
 	if(info==NULL)
 	{
 	    printf("ERROR: El formato de la imagen es incorrecto.\n");
@@ -144,8 +143,8 @@ main(int argc,char * argv[])
 	    free(info);
 	    exit(EXIT_FAILURE);
 	}
-	//PrintImageInfo(info);
-	printf("Encriptando... ");
+	PrintImageInfo(info);
+	printf("Procesando... ");
 	/*Aca se procesa la imagen en funcion de los parametros pasados.*/
 	if(!Start(encrypt,decrypt,key,method,alg,password,vi,srcFile,dstFile,info))
 	{
@@ -249,6 +248,24 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
         }
     }
     
+    if(password!=NULL && ( (strlen(password)!=8 && strncmp(alg,"des",3)==0) || (strlen(password)!=16 && strncmp(alg,"aes",3)==0) ))
+    {
+        printf("ERROR: La longitud del password debe ser 8 para DES o 16 para AES\n");
+        return 0;
+    }
+    
+    if(key!=NULL && (strlen(key)!=8 || strlen(key)!=16))
+    {
+        printf("ERROR: La longitud del key debe ser 8 para DES o 16 para AES\n");
+        return 0;
+    }
+    
+    if(vi!=NULL && (strlen(vi)!=8 || strlen(vi)!=16))
+    {
+        printf("ERROR: La longitud del vector de inicializacion debe ser 8 para DES o 16 para AES\n");
+        return 0;
+    }
+    
     return 1;
 }
 
@@ -259,27 +276,20 @@ ValidateImageFormat(imageInfo info)
     /*Version 3.0 de BMP*/
     if(strncmp(info->identifier,"BM",2)!=0)
     {
-        free(info);
-        return NULL;
-    }
-    
-    /*Bit per pixel menor a 24*/
-    if(info->bpp<=24)
-    {
-        free(info);
+        printf("ERROR: La version de BMP no es la v3\n");
         return NULL;
     }
     
     /*La imagen no esta comprimida*/
     if(info->compression!=0)
     {
-        free(info);
+        printf("ERROR: La imagen se encuentra comprimida.\n");
         return NULL;
     }
     
-    if(info->dataSize%8!=0 || info->dataSize%16!=0)
+    if(info->dataSize%8!=0 && info->dataSize%16!=0)
     {
-        free(info);
+        printf("ERROR: La imagen debe ser multiplo de 8 bytes si se desea encriptar con DES o multiplo de 16 bytes si se desea desencriptar.\n");
         return NULL;
     }
     

@@ -412,7 +412,6 @@ CopyHeader(FILE * srcFile,FILE * dstFile,imageInfo info)
 static char *
 SafeKey(char * key,int len)
 {
-    printf("SafeKey ");
     int lenAux;
     char * resp;
     lenAux=(strlen(key)>len)?len:strlen(key);
@@ -422,14 +421,12 @@ SafeKey(char * key,int len)
     }
     
     memcpy(resp,key,lenAux);
-    printf("%s\n",resp);
     return resp;
 }
 
 static char *
 SafePassword(char * password,int len)
 {
-    printf("SafePassword ");
     int lenAux;
     char * resp;
     lenAux=(strlen(password)>len)?len:strlen(password);
@@ -439,14 +436,12 @@ SafePassword(char * password,int len)
     }
     
     memcpy(resp,password,lenAux);
-    printf("%s\n",resp);
     return resp;
 }
 
 static char *
 SafeVI(char * vi,int len)
 {
-    printf("SafeVI ");
     int lenAux;
     char * resp;
     lenAux=(strlen(vi)>len)?len:strlen(vi);
@@ -456,7 +451,6 @@ SafeVI(char * vi,int len)
     }
     
     memcpy(resp,vi,lenAux);
-    printf("%s\n",resp);
     return resp;
 }
 
