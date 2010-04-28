@@ -5,6 +5,7 @@
 #include <string.h>
 #include <openssl/des.h>
 #include <openssl/aes.h>
+#include <openssl/evp.h>
 
 #include "./imageUtils.h"
 
