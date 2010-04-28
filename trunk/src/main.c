@@ -254,13 +254,13 @@ IsValid(int encrypt,int decrypt,char * key,char * method,char * alg,char * passw
         return 0;
     }
     
-    if(key!=NULL && (strlen(key)!=8 || strlen(key)!=16))
+    if(key!=NULL && ( (strlen(key)!=8 && strncmp(alg,"des",3)==0) || (strlen(key)!=16 && strncmp(alg,"aes",3)==0) ))
     {
         printf("ERROR: La longitud del key debe ser 8 para DES o 16 para AES\n");
         return 0;
     }
     
-    if(vi!=NULL && (strlen(vi)!=8 || strlen(vi)!=16))
+    if(vi!=NULL && ( (strlen(vi)!=8 && strncmp(alg,"des",3)==0) || (strlen(vi)!=16 && strncmp(alg,"aes",3)==0) ))
     {
         printf("ERROR: La longitud del vector de inicializacion debe ser 8 para DES o 16 para AES\n");
         return 0;

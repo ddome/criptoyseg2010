@@ -90,8 +90,6 @@ Start(int encrypt,int decrypt,char * key,char * method,char * alg,char * passwor
     {
         status=0;
     }
-    free(key);
-    free(vi);
     return status;
 }
 
@@ -146,7 +144,6 @@ AES_CBC_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     else
         AES_set_decrypt_key((const unsigned char *)key,128,&pass);
 
-    printf("Aca\n");
     while((fread(src_block,16*sizeof(char),1,srcFile))==1)
     {
         AES_cbc_encrypt(src_block,block,16,&pass,(unsigned char * )vi,type);
@@ -186,21 +183,15 @@ AES_CFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     unsigned char block[16]={0};
     unsigned char src_block[16]={0};
     AES_KEY pass;
-    int num=16;
-    
+    int num=0;
     CopyHeader(srcFile,dstFile,info);
 
-    if( type == AES_ENCRYPT )
-        AES_set_encrypt_key((const unsigned char *)key,128,&pass);
-    else
-        AES_set_decrypt_key((const unsigned char *)key,128,&pass);
-
+    AES_set_encrypt_key((const unsigned char *)key,128,&pass);
+    
     while((fread(src_block,16*sizeof(char),1,srcFile))==1)
     {
         AES_cfb128_encrypt(src_block,block,16,&pass,(unsigned char *)vi,&num,type);
         fwrite(&block,16*sizeof(char),1,dstFile);
-        memset(src_block,0x0,16);
-        memset(block,0x0,16);
     }
     
     return 1;
@@ -216,12 +207,8 @@ AES_OFB_crypt(FILE * srcFile,FILE * dstFile,imageInfo info,char * key,char * vi,
     
     CopyHeader(srcFile,dstFile,info);
     strncpy((char *)block,key,16);
-    printf("AES OFB Tipo: %d\n",type);
-    if( type == AES_ENCRYPT )
-        AES_set_encrypt_key((const unsigned char *)&block,128,&pass);
-    else
-        AES_set_decrypt_key((const unsigned char *)&block,128,&pass);
-
+    
+    AES_set_encrypt_key((const unsigned char *)&block,128,&pass);
     
     while((fread(src_block,16*sizeof(char),1,srcFile))==1)
     {
@@ -415,7 +402,7 @@ SafeKey(char * key,int len)
     int lenAux;
     char * resp;
     lenAux=(strlen(key)>len)?len:strlen(key);
-    if((resp=calloc(len,1))==NULL)
+    if((resp=calloc(1,len))==NULL)
     {
         return NULL;
     }
@@ -430,7 +417,7 @@ SafePassword(char * password,int len)
     int lenAux;
     char * resp;
     lenAux=(strlen(password)>len)?len:strlen(password);
-    if((resp=calloc(len,1))==NULL)
+    if((resp=calloc(1,len))==NULL)
     {
         return NULL;
     }
@@ -445,7 +432,7 @@ SafeVI(char * vi,int len)
     int lenAux;
     char * resp;
     lenAux=(strlen(vi)>len)?len:strlen(vi);
-    if((resp=calloc(len,1))==NULL)
+    if((resp=calloc(1,len))==NULL)
     {
         return NULL;
     }
@@ -462,6 +449,7 @@ Generate_Key_VI(char * password,char ** key,char ** vi,int method)
         const EVP_CIPHER *cipher;
         const EVP_MD *dgst = EVP_md5();
         char key_aux[16];
+        char vi_aux[16];
         switch( method ){
 	    case CFB:
 		cipher = EVP_aes_128_cfb();
@@ -486,8 +474,9 @@ Generate_Key_VI(char * password,char ** key,char ** vi,int method)
 	printf("ERROR: Se ha producido un error de memoria\n");
 	return 0;
         }
-        EVP_BytesToKey(cipher,dgst,NULL,(unsigned char *)password,strlen(password),1,(unsigned char *)key_aux,(unsigned char *)*vi);
+        EVP_BytesToKey(cipher,dgst,NULL,(unsigned char *)password,strlen(password),1,(unsigned char *)key_aux,(unsigned char *)vi_aux);
         memcpy(*key,key_aux,16);
+        memcpy(*vi,vi_aux,16);
     }
     
     return 1;
